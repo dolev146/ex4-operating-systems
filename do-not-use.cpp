@@ -1,5 +1,9 @@
 // https://www.techiedelight.com/stack-implementation-in-cpp/
 
+
+
+
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -47,10 +51,11 @@ void Stack::push(std::string x)
 {
     if (isFull())
     {
+
         cout << "Overflow\nProgram Terminated\n";
         exit(EXIT_FAILURE);
     }
-
+    
     cout << "Inserting " << x << endl;
     arr[++top] = x;
 }
