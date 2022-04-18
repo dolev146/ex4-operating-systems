@@ -18,6 +18,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <pthread.h>
+#include "Stack.hpp"
 
 #define PORT "3490"  // the port users will be connecting to
 
@@ -60,6 +61,9 @@ void *get_in_addr(struct sockaddr *sa)
 
 int main(void)
 {
+
+	Stack *my_stack = new Stack();
+
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr; // connector's address information
@@ -83,22 +87,21 @@ int main(void)
 	for(p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd = socket(p->ai_family, p->ai_socktype,
 				p->ai_protocol)) == -1) {
-			perror("server: socket");
+			perror("server error with : socket connection");
 			continue;
 		}
 
 		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
 				sizeof(int)) == -1) {
-			perror("setsockopt");
+			perror("setsockopt error");
 			exit(1);
 		}
 
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
 			close(sockfd);
-			perror("server: bind");
+			perror("server: bind error");
 			continue;
 		}
-
 		break;
 	}
 
@@ -118,7 +121,7 @@ int main(void)
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
 	if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-		perror("sigaction");
+		perror("sigaction error !");
 		exit(1);
 	}
 
@@ -128,7 +131,7 @@ int main(void)
 		sin_size = sizeof their_addr;
 		new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
 		if (new_fd == -1) {
-			perror("accept");
+			perror("accept error!");
 			continue;
 		}
 
